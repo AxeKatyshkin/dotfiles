@@ -1,0 +1,42 @@
+name: ✨ Test Dotfiles Installation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  install-on-ubuntu:
+    name: Install on Ubuntu
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout dummy repo (not needed, but standard)
+        uses: actions/checkout@v4
+
+      - name: Run install.sh from GitHub
+        run: |
+          sudo apt update && sudo apt install -y curl git zsh
+          bash <(curl -sL https://raw.githubusercontent.com/AxeKatyshkin/dotfiles/main/install.sh)
+
+      - name: Validate Zsh installed and .zshrc exists
+        run: |
+          command -v zsh
+          test -f "$HOME/.zshrc"
+          grep spaceship ~/.zshrc
+
+      - name: Print summary
+        run: echo "✅ install.sh completed successfully on Ubuntu"
+
+  check-raw-access:
+    name: Check raw.githubusercontent access
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test file download from raw.githubusercontent
+        run: |
+          curl -sI https://raw.githubusercontent.com/AxeKatyshkin/dotfiles/main/bootstrap.sh
+          curl -sI https://cdn.jsdelivr.net/gh/AxeKatyshkin/dotfiles/bootstrap.sh
+
+      - name: Summary
+        run: echo "🌐 raw + jsDelivr both responded"
