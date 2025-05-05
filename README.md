@@ -29,6 +29,13 @@ cd dotfiles
 bash bootstrap.sh
 
 ---
+---
+
+## ☝️ Установка одной командой
+
+```bash
+curl -sL https://raw.githubusercontent.com/AxeKatyshkin/dotfiles/main/install.sh | bash
+
 
 ## 📦 Makefile команды
 
