@@ -16,14 +16,13 @@ fi
 
 # ─── Устанавливаем зависимости ────────────────────
 install_packages() {
+  echo "📦 Installing base packages..."
   if [[ "$OS" == "arch" ]]; then
-    sudo pacman -Syu --noconfirm zsh git curl wget neofetch figlet lolcat \
-      python-pip vnstat ifstat inetutils
-    pip install speedtest-cli
+    sudo pacman -Sy --noconfirm zsh git curl wget neofetch figlet lolcat \
+      python-pip vnstat inetutils
   elif [[ "$OS" == "debian" ]]; then
     sudo apt update && sudo apt install -y zsh git curl wget neofetch figlet lolcat \
-      python3-pip vnstat ifstat inetutils-ping net-tools
-    pip3 install speedtest-cli
+      python3-pip vnstat inetutils-ping net-tools
   fi
 }
 
@@ -53,7 +52,17 @@ install_plugins() {
   git clone https://github.com/zsh-users/zsh-syntax-highlighting "$PLUGINS_DIR/zsh-syntax-highlighting" 2>/dev/null || true
 }
 
-# ─── Копирование файлов ────────────────────────────
+# ─── speedtest-cli (безопасная установка) ─────────
+install_speedtest_cli() {
+  echo "🌐 Installing speedtest-cli..."
+  if command -v pip &>/dev/null; then
+    pip install --break-system-packages speedtest-cli || true
+  else
+    echo "⚠️ pip not found — skipping speedtest-cli"
+  fi
+}
+
+# ─── Копирование dotfiles ──────────────────────────
 install_dotfiles() {
   echo "📄 Installing dotfiles..."
 
@@ -75,7 +84,8 @@ install_packages
 install_oh_my_zsh
 install_spaceship
 install_plugins
+install_speedtest_cli
 install_dotfiles
 
-echo "✅ Done! Run Zsh with:"
+echo "✅ Done! Launch Zsh with:"
 echo "   zsh"
