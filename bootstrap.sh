@@ -87,5 +87,24 @@ install_plugins
 install_speedtest_cli
 install_dotfiles
 
+# === eza aliases ===
+EZA_ALIASES_URL_RAW="https://raw.githubusercontent.com/AxeKatyshkin/dotfiles/main/eza-aliases.zsh"
+EZA_ALIASES_URL_CDN="https://cdn.jsdelivr.net/gh/AxeKatyshkin/dotfiles/eza-aliases.zsh"
+EZA_TARGET="$HOME/.eza-aliases.zsh"
+
+echo "📁 Installing eza-aliases.zsh..."
+if curl -fsSL "$EZA_ALIASES_URL_RAW" -o "$EZA_TARGET"; then
+  echo "✅ eza-aliases.zsh downloaded from raw.githubusercontent.com"
+elif curl -fsSL "$EZA_ALIASES_URL_CDN" -o "$EZA_TARGET"; then
+  echo "⚠️  raw.githubusercontent.com failed, used jsDelivr CDN"
+else
+  echo "❌ Failed to download eza-aliases.zsh from both sources"
+fi
+
+# Ensure .zshrc sources the alias file
+if ! grep -q "eza-aliases.zsh" "$HOME/.zshrc"; then
+  echo '[ -f ~/.eza-aliases.zsh ] && source ~/.eza-aliases.zsh' >> "$HOME/.zshrc"
+fi
+
 echo "✅ Done! Launch Zsh with:"
 echo "   zsh"
