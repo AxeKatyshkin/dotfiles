@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 set -e
 
 echo "🔧 Installing environment for axe..."
@@ -28,7 +27,7 @@ install_packages() {
   fi
 }
 
-# ─── Устанавливаем Oh My Zsh ──────────────────────
+# ─── Oh My Zsh ─────────────────────────────────────
 install_oh_my_zsh() {
   if [ ! -d "$HOME/.oh-my-zsh" ]; then
     echo "📥 Installing Oh My Zsh..."
@@ -50,28 +49,33 @@ install_spaceship() {
 install_plugins() {
   local PLUGINS_DIR="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins"
 
-  if [ ! -d "$PLUGINS_DIR/zsh-autosuggestions" ]; then
-    git clone https://github.com/zsh-users/zsh-autosuggestions "$PLUGINS_DIR/zsh-autosuggestions"
-  fi
-  if [ ! -d "$PLUGINS_DIR/zsh-syntax-highlighting" ]; then
-    git clone https://github.com/zsh-users/zsh-syntax-highlighting "$PLUGINS_DIR/zsh-syntax-highlighting"
-  fi
+  git clone https://github.com/zsh-users/zsh-autosuggestions "$PLUGINS_DIR/zsh-autosuggestions" 2>/dev/null || true
+  git clone https://github.com/zsh-users/zsh-syntax-highlighting "$PLUGINS_DIR/zsh-syntax-highlighting" 2>/dev/null || true
 }
 
-# ─── Копируем конфиги ──────────────────────────────
+# ─── Копирование файлов ────────────────────────────
 install_dotfiles() {
   echo "📄 Installing dotfiles..."
-  cp ./zshrc-unified ~/.zshrc
-  cp ./welcome.sh ~/.welcome.sh
+
+  cp -f ./zshrc-unified ~/.zshrc
+  cp -f ./welcome.sh ~/.welcome.sh
   chmod +x ~/.welcome.sh
+
+  for file in .eza-aliases.zsh .update.sh .system-cleanup.sh; do
+    if [[ -f "$file" ]]; then
+      echo "➡️  Installing $file"
+      cp -f "$file" ~/
+      chmod +x ~/"$file"
+    fi
+  done
 }
 
-# ─── Всё запускаем ─────────────────────────────────
+# ─── Запуск всех шагов ─────────────────────────────
 install_packages
 install_oh_my_zsh
 install_spaceship
 install_plugins
 install_dotfiles
 
-echo "✅ Done! Запусти zsh чтобы протестировать:"
+echo "✅ Done! Run Zsh with:"
 echo "   zsh"
